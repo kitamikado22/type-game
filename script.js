@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const DEBUG_TYPE = false; 
     const DEBUG_JOKE = "Why do programmers prefer dark mode? ... Because light attracts bugs!";
     const DEBUG_JOKE_JP = "なぜプログラマーはダークモードを好むのか？ ... 光はバグを引き寄せるからさ！";
-    const DEBUG_HIRAGANA = "なぜぷろぐらまーはだーくもーどをこのむのか？ひかりはばぐをひきよせるからさ！";
+    const DEBUG_HIRAGANA = "漢字記号・なぜぷろぐらまーはだーくもーどをこのむのか？ひかりはばぐをひきよせるからさ！";
     
     // Official Joke API
     const JOKE_API_URL = 'https://official-joke-api.appspot.com/random_joke';
@@ -232,6 +232,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 options = [kana]; // 不明な文字はそのまま
             }
 
+            const isRomanizable = !!romajiMap[kana];
+            if (!isRomanizable) {
+                console.warn(`No romaji mapping for kana: ${kana}`);
+                i++;
+                continue;
+            }
+
             // ★修正: 新しいプロパティ名に合わせる
             data.push({
                 kana: kana,
@@ -299,7 +306,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(JOKE_API_URL);
             if (!response.ok) throw new Error('Joke API request failed');
             const joke = await response.json();
-            englishOriginal = `${joke.setup} ... ${joke.punchline}`;
+            englishOriginal = `${joke.setup} ${joke.punchline}`;
+
+            // ★修正1: 英語原文の改行文字を削除
+            englishOriginal = englishOriginal.replace(/[\r\n]/g, '');
+
             return englishOriginal;
         } catch (error) {
             console.error(error);
@@ -369,9 +380,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const data = await response.json();
+            let hiragana = data.converted;
+
+            // ★修正2: ひらがなに変換されたテキストから半角の空白を削除
+            // 日本語のタイピングでは、フレーズ内の空白は不要と見なす
+            hiragana = hiragana.replace(/ /g, '');
 
             if (response.ok) {
-                return data.converted;
+                return hiragana;
             } else {
                 return `エラー: ${data.error || '不明なエラー'}`;
             }
@@ -516,13 +532,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const accuracy = totalStrokes > 0 ? (correctStrokes / totalStrokes) * 100 : 0;
         
         const rawScore = (correctStrokes - missStrokes) / GAME_TIME_SEC * 1000;
-        
-        // ★ 最終スコアをグローバル変数に保存
-        lastCalculatedScore = Math.max(0, Math.floor(rawScore)); 
 
         // ★ 新規追加: 紙吹雪の起動
         // (canvas-confetti ライブラリを使用する場合)
         launchConfetti();
+        
+        // ★ 最終スコアをグローバル変数に保存
+        lastCalculatedScore = Math.max(0, Math.floor(rawScore)); 
 
         scoreValueElem.textContent = lastCalculatedScore; // 保存したスコアを表示
         correctStrokesElem.textContent = correctStrokes;
@@ -546,8 +562,10 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function launchConfetti() {
         if (typeof confetti === 'function') {
+            console.log('Launching confetti animation!');
+
             // スコアが高いほど、長く派手に演出するように調整可能
-            const particleCount = lastCalculatedScore > 500 ? 300 : 150;
+            const particleCount = lastCalculatedScore > 2000 ? 300 : 150;
             
             // 画面中央から上向きに紙吹雪を打ち上げる
             confetti({
