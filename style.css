@@ -413,3 +413,37 @@ body {
     font-family: 'Roboto Mono', monospace;
     font-weight: 700;
 }
+
+/* style.css に追加 */
+
+/* ドットが3段階で変化するアニメーション */
+@keyframes loading-dots {
+    0% {
+        content: '.';
+    }
+    33% {
+        content: '..';
+    }
+    66% {
+        content: '...';
+    }
+    100% {
+        content: '.';
+    }
+}
+
+/* アニメーションの適用 */
+#loading-dots {
+    text-align: left;
+    /* 初期状態は非表示（3つのドットが表示されるように） */
+    display: inline-block;
+    width: 20px; /* ドットの変化に合わせて要素の幅が変動しないように固定 */
+}
+
+/* ::after 擬似要素を使ってドットを動的に変化させる */
+#loading-dots::after {
+    content: '...'; /* 初期表示 */
+    animation: loading-dots 1.5s infinite steps(1); 
+    /* 1.5秒でアニメーションを繰り返し (infinite)
+       steps(1) で滑らかにせず、段階的に (0%, 33%, 66%) 変化させる */
+}
