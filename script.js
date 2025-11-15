@@ -18,10 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- グローバル変数・定数 ---
 
     // デバッグ用 (APIを叩かずに固定のジョークを使う)
-    const DEBUG_TYPE = false; 
-    const DEBUG_JOKE = "Why do programmers prefer dark mode? ... Because light attracts bugs!";
+    const DEBUG_TYPE = true; 
+    const DEBUG_JOKE = "Why’ do programmers prefer dark mode? ... Because light attracts bugs!";
     const DEBUG_JOKE_JP = "なぜプログラマーはダークモードを好むのか？ ... 光はバグを引き寄せるからさ！";
-    const DEBUG_HIRAGANA = "漢字記号・なぜぷろぐらまーはだーくもーどをこのむのか？ひかりはばぐをひきよせるからさ！";
+    const DEBUG_HIRAGANA = "C#漢字記号・なぜぷろぐらまーはだーくもーどをこのむのか？ひかりはばぐをひきよせるからさ！";
     
     // Official Joke API
     const JOKE_API_URL = 'https://official-joke-api.appspot.com/random_joke';
@@ -164,6 +164,20 @@ document.addEventListener('DOMContentLoaded', () => {
         '！': ['!'], '？': ['?'], '（': ['('], '）': [')'],
         '１': ['1'], '２': ['2'], '３': ['3'], '４': ['4'], '５': ['5'],
         '６': ['6'], '７': ['7'], '８': ['8'], '９': ['9'], '０': ['0'],
+        '＠': ['@'], '＃': ['#'], '＄': ['$'], '％': ['%'], '＆': ['&'],
+        '＊': ['*'], '＋': ['+'], '－': ['-'], '＝': ['='], '／': ['/'],
+        '：': [':'], '；': [';'], '＜': ['<'], '＞': ['>'], '＿': ['_'],
+        '｜': ['|'], '＾': ['^'], '｀': ['`'], '～': ['~'],
+
+        // 半角記号
+        '!': ['!'], '?': ['?'], ',': [','], '.': ['.'], '-': ['-'],
+        '(': ['('], ')': [')'],
+        '1': ['1'], '2': ['2'], '3': ['3'], '4': ['4'], '5': ['5'],
+        '6': ['6'], '7': ['7'], '8': ['8'], '9': ['9'], '0': ['0'],
+        '@': ['@'], '#': ['#'], '$': ['$'], '%': ['%'], '&': ['&'],
+        '*': ['*'], '+': ['+'], '=': ['='], '/': ['/'],
+        ':': [':'], ';': [';'], '<': ['<'], '>': ['>'], '_': ['_'],
+        '|': ['|'], '^': ['^'], '`': ['`'], '~': ['~'],
     };
 
     /**
@@ -228,12 +242,14 @@ document.addEventListener('DOMContentLoaded', () => {
             // その他の文字
             } else if (romajiMap[kana]) {
                 options = [...romajiMap[kana]];
+
+            // アルファベット
+            } else if (/[a-zA-Z]/.test(kana)) {
+                options = [kana.toLowerCase()];
+
+            // 不明な文字
             } else {
                 options = [kana]; // 不明な文字はそのまま
-            }
-
-            const isRomanizable = !!romajiMap[kana];
-            if (!isRomanizable) {
                 console.warn(`No romaji mapping for kana: ${kana}`);
                 i++;
                 continue;
@@ -299,6 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchJoke() {
         if (DEBUG_TYPE) {
             englishOriginal = DEBUG_JOKE;
+            englishOriginal = englishOriginal.replace(/’/g, "'");
             return englishOriginal;
         }
 
@@ -310,6 +327,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // ★修正1: 英語原文の改行文字を削除
             englishOriginal = englishOriginal.replace(/[\r\n]/g, '');
+
+            // ★新規追加: 特殊なアポストロフィを標準のシングルクォートに統一する
+            englishOriginal = englishOriginal.replace(/[\u2018\u2019]/g, "'");
+            englishOriginal = englishOriginal.replace(/’/g, "'");
 
             return englishOriginal;
         } catch (error) {
@@ -688,6 +709,8 @@ document.addEventListener('DOMContentLoaded', () => {
         "プログラマーが自然を嫌うのはなぜ？ ... バグ(bugs)が多すぎるから。",
         "Did you hear about the bread factory burning down? ... They say the business is toast.",
         "パン工場が燃えたのを聞いた？ ... そのビジネスはトースト(toast=焼けたパン/終わった)だと言われている。",
+        "Why did the programmer always carry a pencil? They preferred to write in C#.",
+        "なぜプログラマーはいつも鉛筆を持っていたのか？彼らはC#で書くことを好んだ。",
     ];
 
     /**
