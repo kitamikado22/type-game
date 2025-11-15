@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- グローバル変数・定数 ---
 
     // デバッグ用 (APIを叩かずに固定のジョークを使う)
-    const DEBUG_TYPE = true; 
+    const DEBUG_TYPE = false; 
     const DEBUG_JOKE = "Why’ do programmers prefer dark mode? ... Because light attracts bugs!";
     const DEBUG_JOKE_JP = "なぜプログラマーはダークモードを好むのか？ ... 光はバグを引き寄せるからさ！";
     const DEBUG_HIRAGANA = "C#漢字記号・なぜぷろぐらまーはだーくもーどをこのむのか？ひかりはばぐをひきよせるからさ！";
