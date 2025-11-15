@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Joke Not Found</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="icon.png" type="image/png">
+</head>
+<body>
+    
+    <div id="start-screen" class="screen active">
+        <div class="container">
+            <div id="joke-stream-container"></div> 
+
+            <h1 class="title">404 Joke Not Found</h1>
+            <p id="loading-message">...Now Loading Dictionaries...</p>
+            
+            <div id="mode-select" class="hidden">
+                <button class="mode-button active" data-mode="japanese">日本語 (Japanese)</button>
+                <button class="mode-button" data-mode="english">英語 (English)</button>
+            </div>
+
+            <p id="start-message" class="hidden">Press SPACE to Start</p>
+        </div>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <div class="container game-container">
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+            </div>
+            
+            <div id="japanese-text" class="text-display"></div>
+            
+            <div id="romaji-text" class="text-display typing-text"></div>
+
+            <div id="error-message" class="hidden"></div>
+        </div>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <div class="container result-container">
+            <h2 class="result-title">Time's Up!</h2>
+
+            <div class="result-item">
+                <h3>Score</h3>
+                <p id="score-value">0</p>
+            </div>
+            <div class="result-item">
+                <h3>Correct Strokes</h3>
+                <p id="correct-strokes">0</p>
+            </div>
+            <div class="result-item">
+                <h3>Miss Strokes</h3>
+                <p id="miss-strokes">0</p>
+            </div>
+            <div class="result-item">
+                <h3>Accuracy</h3>
+                <p id="accuracy">0.0%</p>
+            </div>
+
+            <div id="score-submission" class="result-item full-width">
+                <h3>🏆 Save Your Score!</h3>
+                <input type="text" id="username-input" placeholder="Enter your name (10 chars max)" maxlength="10">
+                <button id="submit-score-button">Submit Score</button>
+                <p id="submit-message" class="hidden"></p>
+            </div>
+            
+            <div id="ranking-container" class="result-item full-width">
+                <h3>Ranking</h3>
+                <ol id="ranking-list">
+                    <li>Loading...</li>
+                </ol>
+            </div>
+
+            <button id="retry-button">Retry (Space)</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <script src="script.js"></script>
+</body>
+</html>
