@@ -520,6 +520,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // ★ 最終スコアをグローバル変数に保存
         lastCalculatedScore = Math.max(0, Math.floor(rawScore)); 
 
+        // ★ 新規追加: 紙吹雪の起動
+        // (canvas-confetti ライブラリを使用する場合)
+        launchConfetti();
+
         scoreValueElem.textContent = lastCalculatedScore; // 保存したスコアを表示
         correctStrokesElem.textContent = correctStrokes;
         missStrokesElem.textContent = missStrokes;
@@ -534,6 +538,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ★ ランキングを読み込む
         fetchAndDisplayRankings();
+    }
+
+    /**
+     * ★ 新規追加: 紙吹雪を起動する関数
+     * (canvas-confetti ライブラリのラッパー)
+     */
+    function launchConfetti() {
+        if (typeof confetti === 'function') {
+            // スコアが高いほど、長く派手に演出するように調整可能
+            const particleCount = lastCalculatedScore > 500 ? 300 : 150;
+            
+            // 画面中央から上向きに紙吹雪を打ち上げる
+            confetti({
+                particleCount: particleCount,
+                spread: 90,
+                origin: { y: 0.6 } // 画面の60%の高さから
+            });
+            
+            // 2回目（クラッカーのような爆発をシミュレート）
+             confetti({
+                particleCount: 100,
+                spread: 60,
+                origin: { x: 0.2, y: 0.8 } 
+            });
+            confetti({
+                particleCount: 100,
+                spread: 60,
+                origin: { x: 0.8, y: 0.8 } 
+            });
+        }
     }
 
     /**
