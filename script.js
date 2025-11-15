@@ -357,7 +357,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            console.log('Converting to hiragana/katakana:', text);
             const response = await fetch(KUROSHIRO_API_PROXY_URL, {
                 method: 'POST',
                 headers: {
@@ -372,7 +371,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (response.ok) {
-                console.log('Conversion result:', data.converted);
                 return data.converted;
             } else {
                 return `エラー: ${data.error || '不明なエラー'}`;
@@ -406,6 +404,10 @@ document.addEventListener('DOMContentLoaded', () => {
         resetGame();
         showError('');
         console.log(`Starting game in ${currentGameMode} mode...`);
+
+        // ★新規追加: ロードメッセージの表示
+        japaneseTextElem.textContent = 'Loading phrase...';
+        romajiTextElem.innerHTML = '<span class="untyped">Please wait...</span>';
 
         // 1. ジョーク取得 (英語原文が englishOriginal にセットされる)
         await fetchJoke();
@@ -465,13 +467,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * タイマースタート
+     * タイマースタート/再開
      */
     function startTimer() {
-        if (isTypingStarted) return; // 既に開始済み
+        if (timerInterval) return; // 既にタイマーが動いていたら何もしない
         
-        isTypingStarted = true;
-        timeLeft = GAME_TIME_SEC;
+        isTypingStarted = true; // タイピング開始フラグを立てる (startGame直後のキー入力でのみ使用)
         
         timerInterval = setInterval(() => {
             timeLeft--;
@@ -485,14 +486,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
+     * タイマーを一時停止する
+     */
+    function pauseTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+    }
+
+    /**
      * ゲーム終了 (時間切れ)
      */
     function endGame() {
         if (!isGameRunning) return; 
 
         isGameRunning = false;
-        if (timerInterval) clearInterval(timerInterval);
-        timerInterval = null;
+        pauseTimer(); // ★修正: pauseTimer() を使用
         
         showResult();
         switchScreen('result');
@@ -785,6 +795,9 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault(); // ゲーム中のキー入力を無効化
 
             if (!isTypingStarted) {
+                // ★修正: 初回のみ時間とフラグを設定
+                timeLeft = GAME_TIME_SEC; 
+                isTypingStarted = true; // ここで初めてフラグをtrueにする
                 startTimer();
             }
 
@@ -1007,8 +1020,14 @@ document.addEventListener('DOMContentLoaded', () => {
      * 次のフレーズをロード (タイマーは止めない)
      */
     async function loadNextPhrase() {
+        // ★修正点1: タイマーを停止
+        const wasTypingStarted = isTypingStarted && timerInterval; // ロード前にタイマーが動いていたか
+        if (isGameRunning && wasTypingStarted) {
+            pauseTimer();
+        }
+
         romajiTextElem.innerHTML = '<span class="typed">...Loading next phrase...</span>';
-        japaneseTextElem.textContent = '...';
+        japaneseTextElem.textContent = '...Loading...';
 
         await fetchJoke(); 
 
@@ -1028,6 +1047,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (isGameRunning) { // 時間切れでなければ表示更新
             updateRomajiDisplay();
+
+            // ★修正点2: ロード完了後、以前動いていた場合のみタイマーを再開
+            if (wasTypingStarted) {
+                startTimer(); // startTimerは動いていなければ再開するようになった
+            }
         }
     }
 
