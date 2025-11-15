@@ -443,8 +443,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`Starting game in ${currentGameMode} mode...`);
 
         // ★新規追加: ロードメッセージの表示
-        japaneseTextElem.textContent = 'Loading phrase...';
-        romajiTextElem.innerHTML = '<span class="untyped">Please wait...</span>';
+        japaneseTextElem.innerHTML = '<span class="untyped">Loading phrase</span><span id="loading-dots"></span>';
+        romajiTextElem.innerHTML = '<span class="untyped">Please wait</span><span id="loading-dots"></span>';
 
         // 1. ジョーク取得 (英語原文が englishOriginal にセットされる)
         await fetchJoke();
@@ -1102,7 +1102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         romajiTextElem.innerHTML = '<span class="typed">...Loading next phrase...</span>';
-        japaneseTextElem.textContent = '...Loading...';
+        japaneseTextElem.innerHTML = '<span class="untyped">Loading phrase </span><span id="loading-dots"></span>';
 
         await fetchJoke(); 
 
