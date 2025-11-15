@@ -183,7 +183,7 @@ body {
 
 #japanese-text {
     font-size: 1.2rem;
-    color: var(--typed-color); /* 薄めの色 */
+    color: var(--text-color); /* 薄めの色 */
     font-weight: 700;
     letter-spacing: 1px;
 }
