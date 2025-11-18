@@ -849,14 +849,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // リザルト画面
-        if (screens.result.classList.contains('active')) {
-            if (e.code === 'Space') {
-                e.preventDefault();
-                switchScreen('start');
-                startJokeStream(); // スタートに戻ったらアニメーション再開
-            }
-            return;
-        }
+        // if (screens.result.classList.contains('active')) {
+        //     if (e.code === 'Space') {
+        //         e.preventDefault();
+        //         switchScreen('start');
+        //         startJokeStream(); // スタートに戻ったらアニメーション再開
+        //     }
+        //     return;
+        // }
 
         // タイピング画面
         if (isGameRunning) {
